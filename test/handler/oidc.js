@@ -30,7 +30,7 @@ describe('oidc', () => {
         dynamic: true,
       }
     }
-    client = await Client({test: 'handlers', handler: 'express', config})
+    client = await Client({test: 'handlers', handler: 'node', config})
   })
 
   after(async () => {

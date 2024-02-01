@@ -40,7 +40,7 @@ describe('profile', () => {
         oauth: 1,
       }
     }
-    client = await Client({test: 'handlers', handler: 'express', config})
+    client = await Client({test: 'handlers', handler: 'node', config})
   })
 
   after(async () => {

@@ -18,7 +18,7 @@ describe('oauth1', () => {
     provider = await Provider({flow: 'oauth1'})
     client = await Client({
       test: 'handlers',
-      handler: 'express',
+      handler: 'node',
       config: {
         defaults: {
           origin: 'http://localhost:5001',

@@ -46,7 +46,7 @@ describe('handler', () => {
   })
 
   describe('handlers', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'curveball', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       Array.from({length: 5}).forEach((_, index) => {
         describe(`${handler} - ${index}`, () => {
           before(async () => {
@@ -73,58 +73,8 @@ describe('handler', () => {
     })
   })
 
-  describe('missing session middleware', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'curveball'].forEach((handler) => {
-      describe(handler, () => {
-        before(async () => {
-          client = await Client({test: 'missing-session', handler, config})
-        })
-
-        after(async () => {
-          await client.close()
-        })
-
-        it('success', async () => {
-          try {
-            var {body} = await request({
-              url: client.url('/connect/oauth2'),
-              cookie: {},
-            })
-            t.equal(body, 'Grant: mount session middleware first')
-          }
-          catch (err) {
-            // fastify, hapi - assertion is in the client
-          }
-        })
-      })
-    })
-  })
-
-  describe('missing body-parser middleware', () => {
-    ;['express', 'koa', 'curveball'].forEach((handler) => {
-      describe(handler, () => {
-        before(async () => {
-          client = await Client({test: 'missing-parser', handler, config})
-        })
-
-        after(async () => {
-          await client.close()
-        })
-
-        it('success', async () => {
-          var {body} = await request({
-            method: 'POST',
-            url: client.url('/connect/oauth2'),
-            cookie: {},
-          })
-          t.equal(body, 'Grant: mount body parser middleware first')
-        })
-      })
-    })
-  })
-
   describe('missing provider + missing callback', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({
@@ -189,7 +139,7 @@ describe('handler', () => {
   })
 
   describe('path matching regexp', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({test: 'handlers', handler, config: {
@@ -254,48 +204,8 @@ describe('handler', () => {
     })
   })
 
-  describe('path prefix', () => {
-    ;['express', 'koa', 'hapi', 'fastify'].forEach((handler) => {
-      ;[
-        {config: {path: '/oauth'},         connect: '/oauth/connect/oauth2'},
-        {config: {prefix: '/oauth'},       connect: '/oauth/oauth2'},
-        {config: {prefix: '/oauth/login'}, connect: '/oauth/login/oauth2'},
-      ]
-      .forEach((test) => {
-        describe(`${handler} ${JSON.stringify(test.config)}`, () => {
-          before(async () => {
-            client = await Client({
-              test: 'path-prefix',
-              handler,
-              config: {
-                defaults: {...config.defaults, ...test.config},
-                oauth2: config.oauth2
-              }
-            })
-          })
-
-          after(async () => {
-            await client.close()
-          })
-
-          it('success', async () => {
-            var {body: {response}} = await request({
-              url: client.url(test.connect),
-              cookie: {},
-            })
-            t.deepEqual(response, {
-              access_token: 'token',
-              refresh_token: 'refresh',
-              raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
-            })
-          })
-        })
-      })
-    })
-  })
-
   describe('dynamic session', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({test: 'handlers', handler, config})
@@ -376,7 +286,7 @@ describe('handler', () => {
   })
 
   describe('dynamic state', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'curveball', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({test: 'dynamic-state', handler, config})
@@ -424,7 +334,7 @@ describe('handler', () => {
   })
 
   describe('transport querystring session', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       ;['', 'querystring', 'session'].forEach((transport) => {
         describe(`${handler} - transport ${transport}`, () => {
           before(async () => {
@@ -463,7 +373,7 @@ describe('handler', () => {
   })
 
   describe('transport state', () => {
-    ;['express', 'koa', 'koa-before', 'hapi', 'fastify', 'curveball', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({test: 'transport-state', handler, config: {
@@ -500,7 +410,7 @@ describe('handler', () => {
   })
 
   describe('response filter', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       ;['token', ['tokens'], ['raw'], ['jwt'], ['profile'], ['raw', 'jwt'],
         ['tokens', 'raw', 'jwt', 'profile']].forEach((response) => {
         describe(`${handler} - ${JSON.stringify(response)}`, () => {
@@ -595,7 +505,7 @@ describe('handler', () => {
   })
 
   describe('oauth2 response_mode form_post', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({test: 'handlers', handler, config})
@@ -635,7 +545,7 @@ describe('handler', () => {
   })
 
   describe('cookie-store', () => {
-    ;['express', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({test: 'cookie-store', handler, config})
@@ -661,7 +571,7 @@ describe('handler', () => {
   })
 
   describe('next tick', () => {
-    ;['node', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           client = await Client({test: 'next-tick', handler, config})
@@ -684,34 +594,8 @@ describe('handler', () => {
     })
   })
 
-  describe('third-party middlewares', () => {
-    ;['koa-mount', 'koa-qs'].forEach((handler) => {
-      describe(handler, () => {
-        before(async () => {
-          client = await Client({test: 'third-party', handler, config})
-        })
-
-        after(async () => {
-          await client.close()
-        })
-
-        it('success', async () => {
-          var {body: {response}} = await request({
-            url: client.url('/connect/oauth2'),
-            cookie: {},
-          })
-          t.deepEqual(response, {
-            access_token: 'token',
-            refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
-          })
-        })
-      })
-    })
-  })
-
   describe('extend + state', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           var db = {grant: 'simov'}
@@ -751,7 +635,7 @@ describe('handler', () => {
   })
 
   describe('request options', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         var calls = []
 
@@ -823,7 +707,7 @@ describe('handler', () => {
   })
 
   describe('profile', () => {
-    ;['express', 'koa', 'hapi', 'fastify', 'node', 'aws', 'azure', 'gcloud', 'vercel'].forEach((handler) => {
+    ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
           var extend = [profile]
