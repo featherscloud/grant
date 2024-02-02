@@ -1,33 +1,35 @@
-
 var t = require('assert')
 var qs = require('qs')
 
 var request = require('request-compose').extend({
-  Request: {cookie: require('request-cookie').Request},
-  Response: {cookie: require('request-cookie').Response},
+  Request: { cookie: require('request-cookie').Request },
+  Response: { cookie: require('request-cookie').Response }
 }).client
 var profile = require('grant-profile')
 
-var Provider = require('../util/provider'), provider, oauth1
-var Client = require('../util/client'), client
-
+var Provider = require('../util/provider'),
+  provider,
+  oauth1
+var Client = require('../util/client'),
+  client
 
 describe('handler', () => {
   var config
 
   before(async () => {
-    provider = await Provider({flow: 'oauth2'})
-    oauth1 = await Provider({flow: 'oauth1', port: 5002})
+    provider = await Provider({ flow: 'oauth2' })
+    oauth1 = await Provider({ flow: 'oauth1', port: 5002 })
     config = {
       defaults: {
-        origin: 'http://localhost:5001', callback: '/',
+        origin: 'http://localhost:5001',
+        callback: '/'
       },
       oauth2: {
         authorize_url: provider.url('/oauth2/authorize_url'),
         access_url: provider.url('/oauth2/access_url'),
         profile_url: provider.url('/oauth2/profile_url'),
         oauth: 2,
-        dynamic: true,
+        dynamic: true
       },
       oauth1: {
         request_url: oauth1.url('/oauth1/request_url'),
@@ -35,7 +37,7 @@ describe('handler', () => {
         access_url: oauth1.url('/oauth1/access_url'),
         profile_url: oauth1.url('/oauth1/profile_url'),
         oauth: 1,
-        dynamic: true,
+        dynamic: true
       }
     }
   })
@@ -47,10 +49,10 @@ describe('handler', () => {
 
   describe('handlers', () => {
     ;['node'].forEach((handler) => {
-      Array.from({length: 5}).forEach((_, index) => {
+      Array.from({ length: 5 }).forEach((_, index) => {
         describe(`${handler} - ${index}`, () => {
           before(async () => {
-            client = await Client({test: 'handlers', handler, config, index})
+            client = await Client({ test: 'handlers', handler, config, index })
           })
 
           after(async () => {
@@ -58,14 +60,16 @@ describe('handler', () => {
           })
 
           it('success', async () => {
-            var {body: {response}} = await request({
+            var {
+              body: { response }
+            } = await request({
               url: client.url('/connect/oauth2'),
-              cookie: {},
+              cookie: {}
             })
             t.deepEqual(response, {
               access_token: 'token',
               refresh_token: 'refresh',
-              raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+              raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
             })
           })
         })
@@ -81,7 +85,7 @@ describe('handler', () => {
             test: 'handlers',
             handler,
             config: {
-              defaults: {origin: config.defaults.origin}, // no callback!
+              defaults: { origin: config.defaults.origin }, // no callback!
               oauth2: config.oauth2
             }
           })
@@ -93,46 +97,56 @@ describe('handler', () => {
 
         it('/connect - missing provider', async () => {
           t.equal(config.defaults.dynamic, undefined)
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth5'),
-            cookie: {},
+            cookie: {}
           })
-          t.deepEqual(response, {error: 'Grant: missing or misconfigured provider'})
+          t.deepEqual(response, { error: 'Grant: missing or misconfigured provider' })
         })
 
         it('/connect - unsupported oauth version', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            qs: {oauth: 5},
-            cookie: {},
+            qs: { oauth: 5 },
+            cookie: {}
           })
-          t.deepEqual(response, {error: 'Grant: missing or misconfigured provider'})
+          t.deepEqual(response, { error: 'Grant: missing or misconfigured provider' })
         })
 
         it('/connect - authorize error', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            qs: {authorize_url: provider.url('/authorize_error_message')},
-            cookie: {},
+            qs: { authorize_url: provider.url('/authorize_error_message') },
+            cookie: {}
           })
-          t.deepEqual(response, {error: {message: 'invalid'}})
+          t.deepEqual(response, { error: { message: 'invalid' } })
         })
 
         it('/connect - access error', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            qs: {access_url: provider.url('/access_error_status')},
-            cookie: {},
+            qs: { access_url: provider.url('/access_error_status') },
+            cookie: {}
           })
-          t.deepEqual(response, {error: {invalid: 'access_url'}})
+          t.deepEqual(response, { error: { invalid: 'access_url' } })
         })
 
         it('/callback - missing session', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2/callback'),
-            cookie: {},
+            cookie: {}
           })
-          t.deepEqual(response, {error: 'Grant: missing session or misconfigured provider'})
+          t.deepEqual(response, { error: 'Grant: missing session or misconfigured provider' })
         })
       })
     })
@@ -142,17 +156,22 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          client = await Client({test: 'handlers', handler, config: {
-            defaults: {
-              origin: 'http://localhost:5001', callback: '/',
-            },
-            oauth2: {
-              authorize_url: provider.url('/oauth2/authorize_url'),
-              access_url: provider.url('/oauth2/access_url'),
-              oauth: 2,
-              overrides: {override: {}},
+          client = await Client({
+            test: 'handlers',
+            handler,
+            config: {
+              defaults: {
+                origin: 'http://localhost:5001',
+                callback: '/'
+              },
+              oauth2: {
+                authorize_url: provider.url('/oauth2/authorize_url'),
+                access_url: provider.url('/oauth2/access_url'),
+                oauth: 2,
+                overrides: { override: {} }
+              }
             }
-          }})
+          })
         })
 
         after(async () => {
@@ -160,43 +179,38 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var paths = [
-            '/connect/oauth2',
-            '/connect/oauth2/override',
-          ]
-          var endings = [
-            '',
-            '/',
-            '/?a=/',
-            '?',
-            '?a=/',
-          ]
+          var paths = ['/connect/oauth2', '/connect/oauth2/override']
+          var endings = ['', '/', '/?a=/', '?', '?a=/']
           for (var path of paths) {
             for (var end of endings) {
               if (
                 /fastify|hapi/.test(handler) &&
                 '/connect/oauth2/override' === path &&
-                ['/', '/?a=/'].includes(end)) {
+                ['/', '/?a=/'].includes(end)
+              ) {
                 continue
               }
-              var {body: {response}} = await request({
+              var {
+                body: { response }
+              } = await request({
                 url: client.url(path + end),
-                cookie: {},
+                cookie: {}
               })
               t.deepEqual(response, {
                 access_token: 'token',
                 refresh_token: 'refresh',
-                raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+                raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
               })
             }
           }
           try {
-            var {body: {response}} = await request({
+            var {
+              body: { response }
+            } = await request({
               url: client.url('/connect/oauth2/override/something'),
-              cookie: {},
+              cookie: {}
             })
-          }
-          catch (err) {
+          } catch (err) {
             t.equal(err.message, '404 Not Found')
           }
         })
@@ -208,7 +222,7 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          client = await Client({test: 'handlers', handler, config})
+          client = await Client({ test: 'handlers', handler, config })
         })
 
         after(async () => {
@@ -221,14 +235,14 @@ describe('handler', () => {
         })
 
         it('get', async () => {
-          provider.on.authorize = ({query}) => {
+          provider.on.authorize = ({ query }) => {
             t.deepEqual(query, {
               client_id: 'very',
               response_type: 'code',
               redirect_uri: 'http://localhost:5001/connect/oauth2/callback'
             })
           }
-          provider.on.access = ({form}) => {
+          provider.on.access = ({ form }) => {
             t.deepEqual(form, {
               grant_type: 'authorization_code',
               code: 'code',
@@ -237,35 +251,39 @@ describe('handler', () => {
               redirect_uri: 'http://localhost:5001/connect/oauth2/callback'
             })
           }
-          var {body: {response, session}} = await request({
+          var {
+            body: { response, session }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            qs: {key: 'very', secret: 'secret', foo: 'bar'},
-            cookie: {},
+            qs: { key: 'very', secret: 'secret', foo: 'bar' },
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
           })
-          t.deepEqual(session, {provider: 'oauth2', dynamic: {key: 'very', secret: 'secret', foo: 'bar'}})
+          t.deepEqual(session, { provider: 'oauth2', dynamic: { key: 'very', secret: 'secret', foo: 'bar' } })
         })
 
         it('post', async () => {
-          var {body: {response, session}} = await request({
+          var {
+            body: { response, session }
+          } = await request({
             method: 'POST',
             url: client.url('/connect/oauth2'),
-            form: {key: 'very', secret: 'secret', foo: 'bar'},
+            form: { key: 'very', secret: 'secret', foo: 'bar' },
             cookie: {},
-            redirect: {all: true, method: false},
+            redirect: { all: true, method: false }
           })
-          provider.on.authorize = ({query}) => {
+          provider.on.authorize = ({ query }) => {
             t.deepEqual(query, {
               client_id: 'very',
               response_type: 'code',
               redirect_uri: 'http://localhost:5001/connect/oauth2/callback'
             })
           }
-          provider.on.access = ({form}) => {
+          provider.on.access = ({ form }) => {
             t.deepEqual(form, {
               grant_type: 'authorization_code',
               code: 'code',
@@ -277,9 +295,9 @@ describe('handler', () => {
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
           })
-          t.deepEqual(session, {provider: 'oauth2', dynamic: {key: 'very', secret: 'secret', foo: 'bar'}})
+          t.deepEqual(session, { provider: 'oauth2', dynamic: { key: 'very', secret: 'secret', foo: 'bar' } })
         })
       })
     })
@@ -289,7 +307,7 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          client = await Client({test: 'dynamic-state', handler, config})
+          client = await Client({ test: 'dynamic-state', handler, config })
         })
 
         after(async () => {
@@ -302,14 +320,14 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          provider.on.authorize = ({query}) => {
+          provider.on.authorize = ({ query }) => {
             t.deepEqual(query, {
               client_id: 'very',
               response_type: 'code',
               redirect_uri: 'http://localhost:5001/connect/oauth2/callback'
             })
           }
-          provider.on.access = ({form}) => {
+          provider.on.access = ({ form }) => {
             t.deepEqual(form, {
               grant_type: 'authorization_code',
               code: 'code',
@@ -318,16 +336,18 @@ describe('handler', () => {
               redirect_uri: 'http://localhost:5001/connect/oauth2/callback'
             })
           }
-          var {body: {response, session}} = await request({
+          var {
+            body: { response, session }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            cookie: {},
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
           })
-          t.deepEqual(session, {provider: 'oauth2'})
+          t.deepEqual(session, { provider: 'oauth2' })
         })
       })
     })
@@ -338,7 +358,7 @@ describe('handler', () => {
       ;['', 'querystring', 'session'].forEach((transport) => {
         describe(`${handler} - transport ${transport}`, () => {
           before(async () => {
-            client = await Client({test: 'handlers', handler, config})
+            client = await Client({ test: 'handlers', handler, config })
           })
 
           after(async () => {
@@ -346,25 +366,30 @@ describe('handler', () => {
           })
 
           it('success', async () => {
-            var {body: {response, session, state}} = await request({
+            var {
+              body: { response, session, state }
+            } = await request({
               url: client.url('/connect/oauth2'),
-              qs: {transport},
-              cookie: {},
+              qs: { transport },
+              cookie: {}
             })
             t.deepEqual(response, {
               access_token: 'token',
               refresh_token: 'refresh',
-              raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+              raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
             })
             if (/^(|querystring)$/.test(transport)) {
-              t.deepEqual(session, {provider: 'oauth2', dynamic: {transport}})
-            }
-            else if (/session/.test(transport)) {
-              t.deepEqual(session, {provider: 'oauth2', dynamic: {transport}, response: {
-                access_token: 'token',
-                refresh_token: 'refresh',
-                raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
-              }})
+              t.deepEqual(session, { provider: 'oauth2', dynamic: { transport } })
+            } else if (/session/.test(transport)) {
+              t.deepEqual(session, {
+                provider: 'oauth2',
+                dynamic: { transport },
+                response: {
+                  access_token: 'token',
+                  refresh_token: 'refresh',
+                  raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
+                }
+              })
             }
           })
         })
@@ -376,10 +401,14 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          client = await Client({test: 'transport-state', handler, config: {
-            defaults: {...config.defaults, transport: 'state'},
-            oauth2: config.oauth2
-          }})
+          client = await Client({
+            test: 'transport-state',
+            handler,
+            config: {
+              defaults: { ...config.defaults, transport: 'state' },
+              oauth2: config.oauth2
+            }
+          })
         })
 
         after(async () => {
@@ -387,21 +416,23 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {body: {response, session, state}} = await request({
+          var {
+            body: { response, session, state }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            cookie: {},
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
           })
-          t.deepEqual(session, {provider: 'oauth2'})
+          t.deepEqual(session, { provider: 'oauth2' })
           t.deepEqual(state, {
             response: {
               access_token: 'token',
               refresh_token: 'refresh',
-              raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+              raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
             }
           })
         })
@@ -411,12 +442,19 @@ describe('handler', () => {
 
   describe('response filter', () => {
     ;['node'].forEach((handler) => {
-      ;['token', ['tokens'], ['raw'], ['jwt'], ['profile'], ['raw', 'jwt'],
-        ['tokens', 'raw', 'jwt', 'profile']].forEach((response) => {
+      ;[
+        'token',
+        ['tokens'],
+        ['raw'],
+        ['jwt'],
+        ['profile'],
+        ['raw', 'jwt'],
+        ['tokens', 'raw', 'jwt', 'profile']
+      ].forEach((response) => {
         describe(`${handler} - ${JSON.stringify(response)}`, () => {
           before(async () => {
             var extend = [profile]
-            client = await Client({test: 'handlers', handler, config, extend})
+            client = await Client({ test: 'handlers', handler, config, extend })
           })
 
           after(async () => {
@@ -424,10 +462,10 @@ describe('handler', () => {
           })
 
           it('success', async () => {
-            var {body} = await request({
+            var { body } = await request({
               url: client.url('/connect/oauth2'),
-              qs: {scope: ['openid'], response},
-              cookie: {},
+              qs: { scope: ['openid'], response },
+              cookie: {}
             })
             t.deepEqual(
               body.response,
@@ -453,14 +491,14 @@ describe('handler', () => {
                 jwt: {
                   jwt: {
                     id_token: {
-                      header: {typ: 'JWT'},
-                      payload: {nonce: 'whatever'},
+                      header: { typ: 'JWT' },
+                      payload: { nonce: 'whatever' },
                       signature: 'signature'
                     }
                   }
                 },
                 profile: {
-                  profile: {user: 'simov'}
+                  profile: { user: 'simov' }
                 },
                 'raw,jwt': {
                   raw: {
@@ -471,8 +509,8 @@ describe('handler', () => {
                   },
                   jwt: {
                     id_token: {
-                      header: {typ: 'JWT'},
-                      payload: {nonce: 'whatever'},
+                      header: { typ: 'JWT' },
+                      payload: { nonce: 'whatever' },
                       signature: 'signature'
                     }
                   }
@@ -489,12 +527,12 @@ describe('handler', () => {
                   },
                   jwt: {
                     id_token: {
-                      header: {typ: 'JWT'},
-                      payload: {nonce: 'whatever'},
+                      header: { typ: 'JWT' },
+                      payload: { nonce: 'whatever' },
                       signature: 'signature'
                     }
                   },
-                  profile: {user: 'simov'}
+                  profile: { user: 'simov' }
                 }
               }[[].concat(response).join()]
             )
@@ -508,7 +546,7 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          client = await Client({test: 'handlers', handler, config})
+          client = await Client({ test: 'handlers', handler, config })
         })
 
         after(async () => {
@@ -517,27 +555,29 @@ describe('handler', () => {
 
         it('success', async () => {
           var cookie = {}
-          var {body} = await request({
+          var { body } = await request({
             url: client.url('/connect/oauth2'),
-            qs: qs.stringify({custom_params: {response_mode: 'form_post'}}),
-            cookie,
+            qs: qs.stringify({ custom_params: { response_mode: 'form_post' } }),
+            cookie
           })
           t.equal(body, 'code')
-          var {body: {response, session}} = await request({
+          var {
+            body: { response, session }
+          } = await request({
             method: 'POST',
             url: client.url('/connect/oauth2/callback'),
-            form: {code: 'code'},
+            form: { code: 'code' },
             cookie,
-            redirect: {all: true, method: false}
+            redirect: { all: true, method: false }
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
           })
           t.deepEqual(session, {
             provider: 'oauth2',
-            dynamic: {custom_params: {response_mode: 'form_post'}}
+            dynamic: { custom_params: { response_mode: 'form_post' } }
           })
         })
       })
@@ -548,7 +588,7 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          client = await Client({test: 'cookie-store', handler, config})
+          client = await Client({ test: 'cookie-store', handler, config })
         })
 
         after(async () => {
@@ -556,14 +596,16 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            cookie: {},
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' }
           })
         })
       })
@@ -574,7 +616,7 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          client = await Client({test: 'next-tick', handler, config})
+          client = await Client({ test: 'next-tick', handler, config })
         })
 
         after(async () => {
@@ -582,13 +624,13 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {res, body} = await request({
+          var { res, body } = await request({
             url: client.url('/connect/oauth2'),
-            cookie: {},
+            cookie: {}
           })
           t.equal(res.statusCode, 200)
           t.equal(res.headers['content-type'], 'application/json')
-          t.deepEqual(body, {status: 'redirect prevented'})
+          t.deepEqual(body, { status: 'redirect prevented' })
         })
       })
     })
@@ -598,20 +640,23 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          var db = {grant: 'simov'}
-          var state = ({get, set}) =>
-            get ? Promise.resolve(db[get]) :
-            set ? (db[set.id] = set.value, Promise.resolve()) :
-            Promise.resolve()
+          var db = { grant: 'simov' }
+          var state = ({ get, set }) =>
+            get
+              ? Promise.resolve(db[get])
+              : set
+              ? ((db[set.id] = set.value), Promise.resolve())
+              : Promise.resolve()
           var extend = [
-            ({state}) => async ({provider, input, output}) => {
-              output.profile = await state({get: 'grant'})
-              await state({set: {id: 'grant', value: 'purest'}})
-              t.deepEqual(db, {grant: 'purest'})
-              return {provider, input, output}
-            }
+            ({ state }) =>
+              async ({ provider, input, output }) => {
+                output.profile = await state({ get: 'grant' })
+                await state({ set: { id: 'grant', value: 'purest' } })
+                t.deepEqual(db, { grant: 'purest' })
+                return { provider, input, output }
+              }
           ]
-          client = await Client({test: 'handlers', handler, config, state, extend})
+          client = await Client({ test: 'handlers', handler, config, state, extend })
         })
 
         after(async () => {
@@ -619,14 +664,16 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            cookie: {},
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'},
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' },
             profile: 'simov'
           })
         })
@@ -641,63 +688,70 @@ describe('handler', () => {
 
         before(async () => {
           var agent = new require('http').Agent()
-          agent.createConnection = ((orig) => (...args) => {
-            var {method, headers} = args[0]
-            calls.push({method, headers})
-            return orig(...args)
-          })(agent.createConnection)
-          client = await Client({test: 'handlers', handler, config, request: {agent}})
+          agent.createConnection = (
+            (orig) =>
+            (...args) => {
+              var { method, headers } = args[0]
+              calls.push({ method, headers })
+              return orig(...args)
+            }
+          )(agent.createConnection)
+          client = await Client({ test: 'handlers', handler, config, request: { agent } })
         })
 
         after(async () => {
           await client.close()
         })
 
-        afterEach(() => calls = [])
+        afterEach(() => (calls = []))
 
         it('oauth2', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            qs: {response: ['tokens', 'raw', 'profile']},
-            cookie: {},
+            qs: { response: ['tokens', 'raw', 'profile'] },
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'},
-            profile: {user: 'simov'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' },
+            profile: { user: 'simov' }
           })
-          var {method, headers} = calls[0]
+          var { method, headers } = calls[0]
           t.equal(method, 'POST')
           t.equal(headers['content-type'], 'application/x-www-form-urlencoded')
           t.ok(/^simov\/grant/.test(headers['user-agent']))
-          var {method, headers} = calls[1]
+          var { method, headers } = calls[1]
           t.equal(method, 'GET')
           t.equal(headers.authorization, 'Bearer token')
           t.ok(/^simov\/grant/.test(headers['user-agent']))
         })
 
         it('oauth1', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth1'),
-            qs: {response: ['tokens', 'raw', 'profile']},
-            cookie: {},
+            qs: { response: ['tokens', 'raw', 'profile'] },
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             access_secret: 'secret',
-            raw: {oauth_token: 'token', oauth_token_secret: 'secret'},
-            profile: {user: 'simov'}
+            raw: { oauth_token: 'token', oauth_token_secret: 'secret' },
+            profile: { user: 'simov' }
           })
-          var {method, headers} = calls[0]
+          var { method, headers } = calls[0]
           t.equal(method, 'POST')
           t.ok(/oauth_callback/.test(headers.Authorization))
           t.ok(/^simov\/grant/.test(headers['user-agent']))
-          var {method, headers} = calls[1]
+          var { method, headers } = calls[1]
           t.equal(method, 'POST')
           t.ok(/oauth_verifier/.test(headers.Authorization))
           t.ok(/^simov\/grant/.test(headers['user-agent']))
-          var {method, headers} = calls[2]
+          var { method, headers } = calls[2]
           t.equal(method, 'GET')
           t.ok(/oauth_token/.test(headers.Authorization))
           t.ok(/^simov\/grant/.test(headers['user-agent']))
@@ -711,7 +765,7 @@ describe('handler', () => {
       describe(handler, () => {
         before(async () => {
           var extend = [profile]
-          client = await Client({test: 'handlers', handler, config, extend})
+          client = await Client({ test: 'handlers', handler, config, extend })
         })
 
         after(async () => {
@@ -719,15 +773,17 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {body: {response}} = await request({
+          var {
+            body: { response }
+          } = await request({
             url: client.url('/connect/oauth2'),
-            cookie: {},
+            cookie: {}
           })
           t.deepEqual(response, {
             access_token: 'token',
             refresh_token: 'refresh',
-            raw: {access_token: 'token', refresh_token: 'refresh', expires_in: '3600'},
-            profile: {user: 'simov'}
+            raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' },
+            profile: { user: 'simov' }
           })
         })
       })
