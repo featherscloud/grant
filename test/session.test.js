@@ -1,6 +1,6 @@
 const t = require('assert')
 const signature = require('cookie-signature')
-const session = require('../lib/session')
+const session = require('../lib/session.js')
 
 describe('session', () => {
   it('throw on missing cookie secret', () => {

@@ -1,13 +1,15 @@
 const t = require('assert')
 const qs = require('qs')
+const rc = require('request-compose')
+const rcookie = require('request-cookie')
 
-const oauth = require('../../config/oauth')
-const Provider = require('../util/provider')
-const Client = require('../util/client')
+const oauth = require('../../config/oauth.js')
+const Provider = require('../util/provider.js')
+const Client = require('../util/client.js')
 
-const request = require('request-compose').extend({
-  Request: { cookie: require('request-cookie').Request },
-  Response: { cookie: require('request-cookie').Response }
+const request = rc.extend({
+  Request: { cookie: rcookie.Request },
+  Response: { cookie: rcookie.Response }
 }).client
 
 describe('oauth2', () => {

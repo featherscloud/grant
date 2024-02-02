@@ -1,16 +1,17 @@
 const t = require('assert')
-
+const rc = require('request-compose')
+const rcookie = require('request-cookie')
 const qs = require('qs')
 const jws = require('jws')
-const oidc = require('../../lib/oidc')
-const keys = require('../util/keys')
 
-const Provider = require('../util/provider')
-const Client = require('../util/client')
+const oidc = require('../../lib/oidc.js')
+const keys = require('../util/keys.js')
+const Provider = require('../util/provider.js')
+const Client = require('../util/client.js')
 
-const request = require('request-compose').extend({
-  Request: { cookie: require('request-cookie').Request },
-  Response: { cookie: require('request-cookie').Response }
+const request = rc.extend({
+  Request: { cookie: rcookie.Request },
+  Response: { cookie: rcookie.Response }
 }).client
 
 describe('oidc', () => {

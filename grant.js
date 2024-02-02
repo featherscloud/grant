@@ -1,4 +1,4 @@
-const _handler = require('./lib/handler')
+const _handler = require('./lib/handler.js')
 
 function grant({ handler, ...rest }) {
   return _handler(rest)

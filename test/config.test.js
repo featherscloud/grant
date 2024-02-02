@@ -1,5 +1,5 @@
 const t = require('assert')
-const config = require('../lib/config')
+const config = require('../lib/config.js')
 
 describe('config', () => {
   describe('dcopy', () => {

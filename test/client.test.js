@@ -2,7 +2,7 @@ const t = require('assert')
 const http = require('http')
 const qs = require('qs')
 const compose = require('request-compose')
-const request = require('../lib/client')
+const request = require('../lib/client.js')
 
 describe('client', () => {
   describe('defaults', () => {

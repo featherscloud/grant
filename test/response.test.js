@@ -1,5 +1,5 @@
 const t = require('assert')
-const response = require('../lib/response')
+const response = require('../lib/response.js')
 
 const sign = (...args) =>
   args
