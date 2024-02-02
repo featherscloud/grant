@@ -29,41 +29,20 @@
     "url": "https://github.com/simov/grant.git"
   },
   "dependencies": {
+    "cookie": "^0.5.0",
+    "cookie-signature": "^1.2.1",
+    "jwk-to-pem": "^2.0.5",
+    "jws": "^4.0.0",
     "qs": "^6.11.2",
     "request-compose": "^2.1.6",
     "request-oauth": "^1.0.1"
   },
-  "optionalDependencies": {
-    "cookie": "^0.5.0",
-    "cookie-signature": "^1.2.1",
-    "jwk-to-pem": "^2.0.5",
-    "jws": "^4.0.0"
-  },
   "devDependencies": {
-    "@curveball/bodyparser": "0.4.6",
-    "@curveball/core": "0.14.2",
-    "@curveball/router": "0.2.4",
-    "@curveball/session": "0.5.0",
-    "@fastify/cookie": "^9.1.0",
-    "@fastify/formbody": "^7.4.0",
-    "@fastify/session": "^10.5.0",
-    "@hapi/hapi": "^21.3.2",
-    "@hapi/yar": "^11.0.1",
-    "body-parser": "^1.20.2",
     "cookie-session": "^2.0.0",
-    "express": "^4.18.2",
-    "express-session": "^1.17.3",
-    "fastify": "^4.23.2",
     "grant-profile": "^1.0.2",
-    "koa": "^2.14.2",
-    "koa-bodyparser": "^4.4.1",
-    "koa-mount": "^4.0.0",
-    "koa-qs": "^3.0.0",
-    "koa-session": "^6.4.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "request-cookie": "^1.0.1",
-    "request-logs": "^2.1.5"
+    "request-cookie": "^1.0.1"
   },
   "main": "./grant.js",
   "files": [

@@ -1,11 +1,11 @@
+const _handler = require('./lib/handler')
 
-function grant ({handler, ...rest}) {
-  return require('./lib/handler')(rest)
+function grant({ handler, ...rest }) {
+  return _handler(rest)
 }
 
 grant.node = (options) => {
-  var handler = require('./lib/handler')
-  return options ? handler(options) : handler
+  return options ? _handler(options) : _handler
 }
 
 grant.default = grant
