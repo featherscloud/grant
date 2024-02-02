@@ -1,18 +1,18 @@
-var t = require('assert')
-var config = require('../lib/config')
+const t = require('assert')
+const config = require('../lib/config')
 
 describe('config', () => {
   describe('dcopy', () => {
     it('deep copy', () => {
-      var obj = { a: { b: 'c' } }
-      var copy = config.dcopy(obj)
+      const obj = { a: { b: 'c' } }
+      const copy = config.dcopy(obj)
       copy.a.b = 'd'
       t.deepEqual(obj, { a: { b: 'c' } })
       t.deepEqual(copy, { a: { b: 'd' } })
     })
     it('filter undefined', () => {
-      var obj = { a: 1, b: undefined }
-      var copy = config.dcopy(obj)
+      const obj = { a: 1, b: undefined }
+      const copy = config.dcopy(obj)
       t.deepEqual(obj, { a: 1, b: undefined })
       t.deepEqual(copy, { a: 1 })
     })
@@ -20,26 +20,26 @@ describe('config', () => {
 
   describe('merge', () => {
     it('deep assign', () => {
-      var result = config.merge({ a: true, b: 'c' }, { a: false, b: undefined })
+      const result = config.merge({ a: true, b: 'c' }, { a: false, b: undefined })
       t.deepEqual(result, { a: false, b: 'c' })
     })
     it('filter falsy args', () => {
-      var result = config.merge({ a: true }, undefined, { a: false })
+      const result = config.merge({ a: true }, undefined, { a: false })
       t.deepEqual(result, { a: false })
     })
   })
 
   describe('filter', () => {
     it('empty string', () => {
-      var result = config.filter({ state: 'grant', nonce: '' })
+      const result = config.filter({ state: 'grant', nonce: '' })
       t.deepEqual(result, { state: 'grant' })
     })
     it('provider name', () => {
-      var result = config.filter({ name: 'grant', grant: true, foo: true })
+      const result = config.filter({ name: 'grant', grant: true, foo: true })
       t.deepEqual(result, { name: 'grant', grant: true })
     })
     it('reserved key', () => {
-      var result = config.filter({ state: true, foo: true })
+      const result = config.filter({ state: true, foo: true })
       t.deepEqual(result, { state: true })
     })
   })
@@ -167,7 +167,7 @@ describe('config', () => {
 
   describe('pkce', () => {
     it('pkce', () => {
-      var { code_verifier, code_challenge } = config.pkce()
+      const { code_verifier, code_challenge } = config.pkce()
       t.ok(typeof code_verifier === 'string')
       t.ok(/[a-z0-9]{80}/.test(code_verifier))
       t.ok(typeof code_challenge === 'string')
@@ -232,8 +232,8 @@ describe('config', () => {
 
   describe('compat', () => {
     it('fitbit2 - oauth1 to oauth2', () => {
-      var input = { fitbit2: { key: 'key', secret: 'secret' } }
-      var output = config.compat(input)
+      const input = { fitbit2: { key: 'key', secret: 'secret' } }
+      const output = config.compat(input)
       t.deepEqual(input, { fitbit2: { key: 'key', secret: 'secret' } }, 'input config should be unchanged')
       t.deepEqual(
         output,
@@ -252,8 +252,8 @@ describe('config', () => {
       )
     })
     it('linkedin2 - oauth1 to oauth2', () => {
-      var input = { linkedin2: { key: 'key', secret: 'secret' } }
-      var output = config.compat(input)
+      const input = { linkedin2: { key: 'key', secret: 'secret' } }
+      const output = config.compat(input)
       t.deepEqual(input, { linkedin2: { key: 'key', secret: 'secret' } }, 'input config should be unchanged')
       t.deepEqual(
         output,
@@ -272,8 +272,8 @@ describe('config', () => {
       )
     })
     it('zeit - zeit to vercel', () => {
-      var input = { zeit: { key: 'key', secret: 'secret' } }
-      var output = config.compat(input)
+      const input = { zeit: { key: 'key', secret: 'secret' } }
+      const output = config.compat(input)
       t.deepEqual(input, { zeit: { key: 'key', secret: 'secret' } }, 'input config should be unchanged')
       t.deepEqual(
         output,
@@ -294,7 +294,7 @@ describe('config', () => {
 
   describe('ctor', () => {
     it('defaults', () => {
-      var defaults = config({
+      const defaults = config({
         defaults: { protocol: 'http', host: 'localhost:3000' },
         facebook: { state: true, scope: ['openid'] }
       })
@@ -317,7 +317,7 @@ describe('config', () => {
       })
     })
     it('no defaults', () => {
-      var nodefaults = config({
+      const nodefaults = config({
         facebook: {
           protocol: 'http',
           host: 'localhost:3000',
@@ -360,8 +360,8 @@ describe('config', () => {
 
   describe('provider', () => {
     it('preconfigured', () => {
-      var options = config({ defaults: {}, grant: {} })
-      var session = { provider: 'grant' }
+      const options = config({ defaults: {}, grant: {} })
+      const session = { provider: 'grant' }
       t.deepEqual(config.provider(options, session), {
         prefix: '/connect',
         name: 'grant',
@@ -369,13 +369,13 @@ describe('config', () => {
       })
     })
     it('dynamic provider - defaults to false', () => {
-      var options = config({})
-      var session = { provider: 'grant' }
+      const options = config({})
+      const session = { provider: 'grant' }
       t.deepEqual(config.provider(options, session), {})
     })
     it('dynamic provider - existing in oauth.json', () => {
-      var options = config({ defaults: { dynamic: true } })
-      var session = { provider: 'facebook' }
+      const options = config({ defaults: { dynamic: true } })
+      const session = { provider: 'facebook' }
       t.deepEqual(config.provider(options, session), {
         authorize_url: 'https://www.facebook.com/dialog/oauth',
         access_url: 'https://graph.facebook.com/oauth/access_token',
@@ -388,8 +388,8 @@ describe('config', () => {
       })
     })
     it('dynamic provider - not existing in oauth.json', () => {
-      var options = config({ defaults: { dynamic: true } })
-      var session = { provider: 'grant' }
+      const options = config({ defaults: { dynamic: true } })
+      const session = { provider: 'grant' }
       t.deepEqual(config.provider(options, session), {
         dynamic: true,
         prefix: '/connect',
@@ -398,8 +398,8 @@ describe('config', () => {
       })
     })
     it('static override', () => {
-      var options = config({ grant: { overrides: { sub: { state: 'purest' } } } })
-      var session = { provider: 'grant', override: 'sub' }
+      const options = config({ grant: { overrides: { sub: { state: 'purest' } } } })
+      const session = { provider: 'grant', override: 'sub' }
       t.deepEqual(config.provider(options, session), {
         state: 'purest',
         prefix: '/connect',
@@ -408,8 +408,8 @@ describe('config', () => {
       })
     })
     it('dynamic params - true', () => {
-      var options = config({ grant: { dynamic: true, state: 'grant' } })
-      var session = { provider: 'grant', dynamic: { state: 'purest' } }
+      const options = config({ grant: { dynamic: true, state: 'grant' } })
+      const session = { provider: 'grant', dynamic: { state: 'purest' } }
       t.deepEqual(config.provider(options, session), {
         dynamic: true,
         state: 'purest',
@@ -429,8 +429,8 @@ describe('config', () => {
       })
     })
     it('dynamic params - array', () => {
-      var options = config({ grant: { dynamic: ['state'], state: 'grant', scope: 'grant' } })
-      var session = { provider: 'grant', dynamic: { state: 'purest', scope: 'purest' } }
+      const options = config({ grant: { dynamic: ['state'], state: 'grant', scope: 'grant' } })
+      const session = { provider: 'grant', dynamic: { state: 'purest', scope: 'purest' } }
       t.deepEqual(config.provider(options, session), {
         dynamic: ['state'],
         state: 'purest',
@@ -452,9 +452,9 @@ describe('config', () => {
       })
     })
     it('state - dynamic', () => {
-      var options = config({ grant: {} })
-      var session = { provider: 'grant' }
-      var state = { dynamic: { state: 's1' } }
+      const options = config({ grant: {} })
+      const session = { provider: 'grant' }
+      const state = { dynamic: { state: 's1' } }
       t.deepEqual(config.provider(options, session, state), {
         state: 's1',
         prefix: '/connect',
@@ -467,12 +467,12 @@ describe('config', () => {
       })
     })
     it('state - dynamic + session dynamic', () => {
-      var options = config({ grant: { oauth: 2, dynamic: ['state', 'scope'] } })
-      var session = {
+      const options = config({ grant: { oauth: 2, dynamic: ['state', 'scope'] } })
+      const session = {
         provider: 'grant',
         dynamic: { key: 'session', secret: 'session', state: 'session', scope: ['session'] }
       }
-      var state = { dynamic: { key: 'state', secret: 'state', state: 'state' } }
+      const state = { dynamic: { key: 'state', secret: 'state', state: 'state' } }
       t.deepEqual(config.provider(options, session, state), {
         oauth: 2,
         dynamic: ['state', 'scope'],
@@ -496,9 +496,9 @@ describe('config', () => {
       })
     })
     it('state', () => {
-      var options = config({ grant: { state: true } })
-      var session = { provider: 'grant' }
-      var result = config.provider(options, session)
+      const options = config({ grant: { state: true } })
+      const session = { provider: 'grant' }
+      const result = config.provider(options, session)
       t.ok(/^[a-fA-F0-9]+$/.test(result.state))
       t.deepEqual(options, {
         defaults: { prefix: '/connect' },
@@ -511,9 +511,9 @@ describe('config', () => {
       })
     })
     it('nonce', () => {
-      var options = config({ grant: { nonce: true } })
-      var session = { provider: 'grant' }
-      var result = config.provider(options, session)
+      const options = config({ grant: { nonce: true } })
+      const session = { provider: 'grant' }
+      const result = config.provider(options, session)
       t.ok(/^[a-fA-F0-9]+$/.test(result.nonce))
       t.deepEqual(options, {
         defaults: { prefix: '/connect' },
@@ -526,9 +526,9 @@ describe('config', () => {
       })
     })
     it('pkce', () => {
-      var options = config({ grant: { pkce: true } })
-      var session = { provider: 'grant' }
-      var result = config.provider(options, session)
+      const options = config({ grant: { pkce: true } })
+      const session = { provider: 'grant' }
+      const result = config.provider(options, session)
       t.ok(typeof result.code_verifier === 'string')
       t.ok(/^[a-z0-9]{80}$/.test(result.code_verifier))
       t.ok(typeof result.code_challenge === 'string')

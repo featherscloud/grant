@@ -1,20 +1,17 @@
-var t = require('assert')
-var qs = require('qs')
+const t = require('assert')
+const qs = require('qs')
 
-var request = require('request-compose').extend({
+const profile = require('grant-profile')
+const Provider = require('../util/provider')
+const Client = require('../util/client')
+
+const request = require('request-compose').extend({
   Request: { cookie: require('request-cookie').Request },
   Response: { cookie: require('request-cookie').Response }
 }).client
-var profile = require('grant-profile')
-
-var Provider = require('../util/provider'),
-  provider,
-  oauth1
-var Client = require('../util/client'),
-  client
 
 describe('handler', () => {
-  var config
+  let config, provider, oauth1, client
 
   before(async () => {
     provider = await Provider({ flow: 'oauth2' })
@@ -60,7 +57,7 @@ describe('handler', () => {
           })
 
           it('success', async () => {
-            var {
+            const {
               body: { response }
             } = await request({
               url: client.url('/connect/oauth2'),
@@ -97,7 +94,7 @@ describe('handler', () => {
 
         it('/connect - missing provider', async () => {
           t.equal(config.defaults.dynamic, undefined)
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth5'),
@@ -107,7 +104,7 @@ describe('handler', () => {
         })
 
         it('/connect - unsupported oauth version', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -118,7 +115,7 @@ describe('handler', () => {
         })
 
         it('/connect - authorize error', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -129,7 +126,7 @@ describe('handler', () => {
         })
 
         it('/connect - access error', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -140,7 +137,7 @@ describe('handler', () => {
         })
 
         it('/callback - missing session', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2/callback'),
@@ -179,10 +176,10 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var paths = ['/connect/oauth2', '/connect/oauth2/override']
-          var endings = ['', '/', '/?a=/', '?', '?a=/']
-          for (var path of paths) {
-            for (var end of endings) {
+          const paths = ['/connect/oauth2', '/connect/oauth2/override']
+          const endings = ['', '/', '/?a=/', '?', '?a=/']
+          for (const path of paths) {
+            for (const end of endings) {
               if (
                 /fastify|hapi/.test(handler) &&
                 '/connect/oauth2/override' === path &&
@@ -190,7 +187,7 @@ describe('handler', () => {
               ) {
                 continue
               }
-              var {
+              const {
                 body: { response }
               } = await request({
                 url: client.url(path + end),
@@ -204,7 +201,7 @@ describe('handler', () => {
             }
           }
           try {
-            var {
+            const {
               body: { response }
             } = await request({
               url: client.url('/connect/oauth2/override/something'),
@@ -251,7 +248,7 @@ describe('handler', () => {
               redirect_uri: 'http://localhost:5001/connect/oauth2/callback'
             })
           }
-          var {
+          const {
             body: { response, session }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -267,7 +264,7 @@ describe('handler', () => {
         })
 
         it('post', async () => {
-          var {
+          const {
             body: { response, session }
           } = await request({
             method: 'POST',
@@ -336,7 +333,7 @@ describe('handler', () => {
               redirect_uri: 'http://localhost:5001/connect/oauth2/callback'
             })
           }
-          var {
+          const {
             body: { response, session }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -366,7 +363,7 @@ describe('handler', () => {
           })
 
           it('success', async () => {
-            var {
+            const {
               body: { response, session, state }
             } = await request({
               url: client.url('/connect/oauth2'),
@@ -416,7 +413,7 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {
+          const {
             body: { response, session, state }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -453,7 +450,7 @@ describe('handler', () => {
       ].forEach((response) => {
         describe(`${handler} - ${JSON.stringify(response)}`, () => {
           before(async () => {
-            var extend = [profile]
+            const extend = [profile]
             client = await Client({ test: 'handlers', handler, config, extend })
           })
 
@@ -462,7 +459,7 @@ describe('handler', () => {
           })
 
           it('success', async () => {
-            var { body } = await request({
+            const { body } = await request({
               url: client.url('/connect/oauth2'),
               qs: { scope: ['openid'], response },
               cookie: {}
@@ -554,14 +551,14 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var cookie = {}
-          var { body } = await request({
+          const cookie = {}
+          const { body } = await request({
             url: client.url('/connect/oauth2'),
             qs: qs.stringify({ custom_params: { response_mode: 'form_post' } }),
             cookie
           })
           t.equal(body, 'code')
-          var {
+          const {
             body: { response, session }
           } = await request({
             method: 'POST',
@@ -596,7 +593,7 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -624,7 +621,7 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var { res, body } = await request({
+          const { res, body } = await request({
             url: client.url('/connect/oauth2'),
             cookie: {}
           })
@@ -640,14 +637,14 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          var db = { grant: 'simov' }
-          var state = ({ get, set }) =>
+          const db = { grant: 'simov' }
+          const state = ({ get, set }) =>
             get
               ? Promise.resolve(db[get])
               : set
               ? ((db[set.id] = set.value), Promise.resolve())
               : Promise.resolve()
-          var extend = [
+          const extend = [
             ({ state }) =>
               async ({ provider, input, output }) => {
                 output.profile = await state({ get: 'grant' })
@@ -664,7 +661,7 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -684,14 +681,14 @@ describe('handler', () => {
   describe('request options', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        var calls = []
+        let calls = []
 
         before(async () => {
-          var agent = new require('http').Agent()
+          const agent = new require('http').Agent()
           agent.createConnection = (
             (orig) =>
             (...args) => {
-              var { method, headers } = args[0]
+              const { method, headers } = args[0]
               calls.push({ method, headers })
               return orig(...args)
             }
@@ -706,7 +703,7 @@ describe('handler', () => {
         afterEach(() => (calls = []))
 
         it('oauth2', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2'),
@@ -719,18 +716,18 @@ describe('handler', () => {
             raw: { access_token: 'token', refresh_token: 'refresh', expires_in: '3600' },
             profile: { user: 'simov' }
           })
-          var { method, headers } = calls[0]
-          t.equal(method, 'POST')
-          t.equal(headers['content-type'], 'application/x-www-form-urlencoded')
-          t.ok(/^simov\/grant/.test(headers['user-agent']))
-          var { method, headers } = calls[1]
-          t.equal(method, 'GET')
-          t.equal(headers.authorization, 'Bearer token')
-          t.ok(/^simov\/grant/.test(headers['user-agent']))
+          let res = calls[0]
+          t.equal(res.method, 'POST')
+          t.equal(res.headers['content-type'], 'application/x-www-form-urlencoded')
+          t.ok(/^simov\/grant/.test(res.headers['user-agent']))
+          res = calls[1]
+          t.equal(res.method, 'GET')
+          t.equal(res.headers.authorization, 'Bearer token')
+          t.ok(/^simov\/grant/.test(res.headers['user-agent']))
         })
 
         it('oauth1', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth1'),
@@ -743,18 +740,18 @@ describe('handler', () => {
             raw: { oauth_token: 'token', oauth_token_secret: 'secret' },
             profile: { user: 'simov' }
           })
-          var { method, headers } = calls[0]
-          t.equal(method, 'POST')
-          t.ok(/oauth_callback/.test(headers.Authorization))
-          t.ok(/^simov\/grant/.test(headers['user-agent']))
-          var { method, headers } = calls[1]
-          t.equal(method, 'POST')
-          t.ok(/oauth_verifier/.test(headers.Authorization))
-          t.ok(/^simov\/grant/.test(headers['user-agent']))
-          var { method, headers } = calls[2]
-          t.equal(method, 'GET')
-          t.ok(/oauth_token/.test(headers.Authorization))
-          t.ok(/^simov\/grant/.test(headers['user-agent']))
+          let res = calls[0]
+          t.equal(res.method, 'POST')
+          t.ok(/oauth_callback/.test(res.headers.Authorization))
+          t.ok(/^simov\/grant/.test(res.headers['user-agent']))
+          res = calls[1]
+          t.equal(res.method, 'POST')
+          t.ok(/oauth_verifier/.test(res.headers.Authorization))
+          t.ok(/^simov\/grant/.test(res.headers['user-agent']))
+          res = calls[2]
+          t.equal(res.method, 'GET')
+          t.ok(/oauth_token/.test(res.headers.Authorization))
+          t.ok(/^simov\/grant/.test(res.headers['user-agent']))
         })
       })
     })
@@ -764,7 +761,7 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
         before(async () => {
-          var extend = [profile]
+          const extend = [profile]
           client = await Client({ test: 'handlers', handler, config, extend })
         })
 
@@ -773,7 +770,7 @@ describe('handler', () => {
         })
 
         it('success', async () => {
-          var {
+          const {
             body: { response }
           } = await request({
             url: client.url('/connect/oauth2'),

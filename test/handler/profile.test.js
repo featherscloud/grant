@@ -1,10 +1,10 @@
-var t = require('assert')
+const t = require('assert')
 
-var Provider = require('../util/provider')
-var Client = require('../util/client')
-var oauth = require('../../config/oauth')
+const Provider = require('../util/provider')
+const Client = require('../util/client')
+const oauth = require('../../config/oauth')
 
-var request = require('request-compose').extend({
+const request = require('request-compose').extend({
   Request: { cookie: require('request-cookie').Request },
   Response: { cookie: require('request-cookie').Response }
 }).client
@@ -17,7 +17,7 @@ describe('profile', () => {
       oauth2: await Provider({ flow: 'oauth2', port: 5000 }),
       oauth1: await Provider({ flow: 'oauth1', port: 5002 })
     }
-    var config = {
+    const config = {
       defaults: {
         origin: 'http://localhost:5001',
         callback: '/',
@@ -52,7 +52,7 @@ describe('profile', () => {
   })
 
   it('oauth2', async () => {
-    var {
+    const {
       body: { response }
     } = await request({
       url: client.url('/connect/oauth2'),
@@ -66,7 +66,7 @@ describe('profile', () => {
   })
 
   it('oauth1', async () => {
-    var {
+    const {
       body: { response }
     } = await request({
       url: client.url('/connect/oauth1'),
@@ -80,7 +80,7 @@ describe('profile', () => {
   })
 
   it('no profile_url', async () => {
-    var {
+    const {
       body: { response }
     } = await request({
       url: client.url('/connect/oauth2'),
@@ -97,7 +97,7 @@ describe('profile', () => {
   })
 
   it('subdomain', async () => {
-    var {
+    const {
       body: { response }
     } = await request({
       url: client.url('/connect/oauth2'),
@@ -115,7 +115,7 @@ describe('profile', () => {
   })
 
   it('error', async () => {
-    var {
+    const {
       body: { response }
     } = await request({
       url: client.url('/connect/oauth2'),
@@ -132,7 +132,7 @@ describe('profile', () => {
   })
 
   it('custom', async () => {
-    var providers = [
+    const providers = [
       'arcgis',
       'constantcontact',
       'baidu',
@@ -160,8 +160,8 @@ describe('profile', () => {
       'weibo',
       'twitter'
     ]
-    for (var name of providers) {
-      var version = oauth[name].oauth
+    for (const name of providers) {
+      const version = oauth[name].oauth
       provider[`oauth${version}`].on.profile = ({ method, query, headers, form }) => {
         'arcgis' === name
           ? t.equal(query.f, 'json')
@@ -220,7 +220,7 @@ describe('profile', () => {
           ? t.equal(query.user_id, 'id')
           : undefined
       }
-      var {
+      const {
         body: { response }
       } = await request({
         url: client.url(`/connect/${name}`),
