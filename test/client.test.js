@@ -23,7 +23,7 @@ describe('client', () => {
 
     it('user-agent', async () => {
       const { res } = await request({ url: 'http://localhost:5000' })
-      t.equal(res.statusCode, 200)
+      t.equal(res.status, 200)
     })
   })
 
