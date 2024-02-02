@@ -1,11 +1,5 @@
 name: Test
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+on: [push, pull_request]
 jobs:
   test:
     name: Node.js
@@ -17,8 +11,6 @@ jobs:
         node:
           - 20
           - 18
-          - 16
-          - 14
     steps:
       # -----------------------------------------------------------------------
       - name: Clone default branch
