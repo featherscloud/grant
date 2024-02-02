@@ -35,7 +35,8 @@
     "jws": "^4.0.0",
     "qs": "^6.11.2",
     "request-compose": "^2.1.6",
-    "request-oauth": "^1.0.1"
+    "uuid": "^8.3.2",
+    "oauth-sign": "^0.9.0"
   },
   "devDependencies": {
     "cookie-session": "^2.0.0",
