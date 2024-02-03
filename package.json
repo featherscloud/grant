@@ -9,17 +9,7 @@
     "openid-connect",
     "authentication",
     "authorization",
-    "proxy",
-    "middleware",
-    "lambda",
-    "express",
-    "koa",
-    "hapi",
-    "fastify",
-    "aws",
-    "azure",
-    "google-cloud",
-    "vercel"
+    "proxy"
   ],
   "license": "MIT",
   "homepage": "https://github.com/simov/grant",
