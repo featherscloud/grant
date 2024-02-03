@@ -395,7 +395,7 @@ describe('oauth2', () => {
       })
     })
 
-    it.skip('access - qs - concur', async () => {
+    it('access - qs - concur', async () => {
       provider.on.access = ({ url, headers, query, form }) => {
         t.deepEqual(query, { code: 'code', client_id: 'key', client_secret: 'secret' })
       }
