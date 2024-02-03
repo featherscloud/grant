@@ -24,7 +24,6 @@
     "qs": "^6.11.2"
   },
   "devDependencies": {
-    "cookie-session": "^2.0.0",
     "grant-profile": "^1.0.2",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
