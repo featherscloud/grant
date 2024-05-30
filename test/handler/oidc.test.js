@@ -1,13 +1,14 @@
-const t = require('assert')
-const rc = require('request-compose')
-const rcookie = require('request-cookie')
-const qs = require('qs')
-const jws = require('jws')
+import { describe, it, beforeAll, afterAll } from 'vitest'
+import t from 'assert'
+import rc from 'request-compose'
+import rcookie from 'request-cookie'
+import qs from 'qs'
+import jws from 'jws'
 
-const oidc = require('../../lib/oidc.js')
-const keys = require('../util/keys.js')
-const Provider = require('../util/provider.js')
-const Client = require('../util/client.js')
+import * as oidc from '../../lib/oidc.js'
+import keys from '../util/keys.js'
+import Provider from '../util/provider.js'
+import Client from '../util/client.js'
 
 const request = rc.extend({
   Request: { cookie: rcookie.Request },
@@ -17,7 +18,7 @@ const request = rc.extend({
 describe('oidc', () => {
   let provider, client
 
-  before(async () => {
+  beforeAll(async () => {
     provider = await Provider({ flow: 'oauth2' })
     const config = {
       defaults: {
@@ -35,7 +36,7 @@ describe('oidc', () => {
     client = await Client({ test: 'handlers', handler: 'node', config })
   })
 
-  after(async () => {
+  afterAll(async () => {
     await provider.close()
     await client.close()
     provider.on.authorize = () => {}

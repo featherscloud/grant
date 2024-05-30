@@ -1,6 +1,6 @@
-const http = require('http')
-const _url = require('url')
-const qs = require('qs')
+import http from 'http'
+import _url from 'url'
+import qs from 'qs'
 
 const buffer = (req, done) => {
   let data = ''
@@ -278,4 +278,4 @@ const on = {
   profile: () => {}
 }
 
-module.exports = provider
+export default provider

@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   'request_url',
   'authorize_url',
   'access_url',

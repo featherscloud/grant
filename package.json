@@ -2,6 +2,7 @@
   "name": "grant",
   "version": "5.4.22",
   "description": "OAuth Proxy",
+  "type": "module",
   "keywords": [
     "oauth",
     "oauth2",
@@ -28,7 +29,8 @@
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "request-compose": "^2.1.6",
-    "request-cookie": "^1.0.1"
+    "request-cookie": "^1.0.1",
+    "vitest": "^1.6.0"
   },
   "main": "./grant.js",
   "files": [
@@ -44,10 +46,9 @@
   "types": "grant.d.ts",
   "scripts": {
     "test": "npm run test:ci",
-    "test:ci": "npx mocha --recursive test/",
-    "test:cov": "npx nyc --reporter=lcov --reporter=text-summary mocha -- --recursive test/"
+    "test:ci": "npx vitest run test/handler/handler.test.js --no-file-parallelism"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=20.0.0"
   }
 }

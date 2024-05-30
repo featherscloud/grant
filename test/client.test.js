@@ -1,14 +1,15 @@
-const t = require('assert')
-const http = require('http')
-const qs = require('qs')
-const compose = require('request-compose')
-const request = require('../lib/client.js')
+import { describe, it, beforeAll, afterAll } from 'vitest'
+import t from 'assert'
+import http from 'http'
+import qs from 'qs'
+import compose from 'request-compose'
+import request from '../lib/client.js'
 
 describe('client', () => {
   describe('defaults', () => {
     let server
 
-    before((done) => {
+    beforeAll((done) => {
       server = http.createServer()
       server.on('request', (req, res) => {
         t.ok(/^simov\/grant/.test(req.headers['user-agent']))
@@ -17,7 +18,7 @@ describe('client', () => {
       server.listen(5000, done)
     })
 
-    after((done) => {
+    afterAll((done) => {
       server.close(done)
     })
 
@@ -30,7 +31,7 @@ describe('client', () => {
   describe('parse', () => {
     let server
 
-    before((done) => {
+    beforeAll((done) => {
       server = http.createServer()
       server.on('request', (req, res) => {
         if (req.url === '/json') {
@@ -53,7 +54,7 @@ describe('client', () => {
       server.listen(5000, done)
     })
 
-    after((done) => {
+    afterAll((done) => {
       server.close(done)
     })
 

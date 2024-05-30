@@ -1,4 +1,4 @@
-const _handler = require('./lib/handler.js')
+import _handler from './lib/handler.js'
 
 function grant({ handler, ...rest }) {
   return _handler(rest)
@@ -9,4 +9,5 @@ grant.node = (options) => {
 }
 
 grant.default = grant
-module.exports = grant
+
+export default grant

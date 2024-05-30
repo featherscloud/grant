@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   '23andme': {
     authorize_url: 'https://api.23andme.com/authorize',
     access_url: 'https://api.23andme.com/token',

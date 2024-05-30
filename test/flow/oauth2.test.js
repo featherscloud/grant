@@ -1,11 +1,12 @@
-const t = require('assert')
-const qs = require('qs')
-const rc = require('request-compose')
-const rcookie = require('request-cookie')
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest'
+import t from 'assert'
+import qs from 'qs'
+import rc from 'request-compose'
+import rcookie from 'request-cookie'
 
-const oauth = require('../../config/oauth.js')
-const Provider = require('../util/provider.js')
-const Client = require('../util/client.js')
+import oauth from '../../config/oauth.js'
+import Provider from '../util/provider.js'
+import Client from '../util/client.js'
 
 const request = rc.extend({
   Request: { cookie: rcookie.Request },
@@ -15,7 +16,7 @@ const request = rc.extend({
 describe('oauth2', () => {
   let provider, client
 
-  before(async () => {
+  beforeAll(async () => {
     provider = await Provider({ flow: 'oauth2' })
     client = await Client({
       test: 'handlers',
@@ -40,7 +41,7 @@ describe('oauth2', () => {
     })
   })
 
-  after(async () => {
+  afterAll(async () => {
     await client.close()
     await provider.close()
   })

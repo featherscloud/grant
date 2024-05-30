@@ -1,6 +1,8 @@
-const t = require('assert')
-const signature = require('cookie-signature')
-const session = require('../lib/session.js')
+import { describe, it } from 'vitest'
+import t from 'assert'
+import signature from 'cookie-signature'
+
+import session from '../lib/session.js'
 
 describe('session', () => {
   it('throw on missing cookie secret', () => {

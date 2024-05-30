@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   '23andme': {
     profile_url: 'https://api.23andme.com/3/account/'
   },

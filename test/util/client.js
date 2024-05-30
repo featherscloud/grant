@@ -1,7 +1,7 @@
-const http = require('http')
-const qs = require('qs')
+import http from 'http'
+import qs from 'qs'
 
-const Grant = require('../../grant.js')
+import Grant from '../../grant.js'
 
 const client = async ({ test, handler, port = 5001, ...rest }) => {
   const { grant, server } = await clients[test][handler]({ port, ...rest })
@@ -150,4 +150,4 @@ const callback = {
   }
 }
 
-module.exports = client
+export default client

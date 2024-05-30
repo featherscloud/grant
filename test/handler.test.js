@@ -1,5 +1,8 @@
-const t = require('assert')
-const Grant = require('../grant.js')
+import { describe, it } from 'vitest'
+import t from 'assert'
+
+import Grant from '../grant.js'
+
 describe('handler', () => {
   describe('constructor', () => {
     it('using new', () => {

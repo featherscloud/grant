@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   RS256: {
     public_jwk: {
       e: 'AQAB',

@@ -1,5 +1,6 @@
-const t = require('assert')
-const config = require('../lib/config.js')
+import { describe, it } from 'vitest'
+import t from 'assert'
+import config from '../lib/config.js'
 
 describe('config', () => {
   describe('dcopy', () => {

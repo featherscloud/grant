@@ -1,11 +1,12 @@
-const t = require('assert')
-const qs = require('qs')
-const rc = require('request-compose')
-const rcookie = require('request-cookie')
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest'
+import t from 'assert'
+import qs from 'qs'
+import rc from 'request-compose'
+import rcookie from 'request-cookie'
 
-const profile = require('grant-profile')
-const Provider = require('../util/provider.js')
-const Client = require('../util/client.js')
+import profile from 'grant-profile'
+import Provider from '../util/provider.js'
+import Client from '../util/client.js'
 
 const request = rc.extend({
   Request: { cookie: rcookie.Request },
@@ -15,7 +16,7 @@ const request = rc.extend({
 describe('handler', () => {
   let config, provider, oauth1, client
 
-  before(async () => {
+  beforeAll(async () => {
     provider = await Provider({ flow: 'oauth2' })
     oauth1 = await Provider({ flow: 'oauth1', port: 5002 })
     config = {
@@ -41,7 +42,7 @@ describe('handler', () => {
     }
   })
 
-  after(async () => {
+  afterAll(async () => {
     await provider.close()
     await oauth1.close()
   })
@@ -50,11 +51,11 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       Array.from({ length: 5 }).forEach((_, index) => {
         describe(`${handler} - ${index}`, () => {
-          before(async () => {
+          beforeAll(async () => {
             client = await Client({ test: 'handlers', handler, config, index })
           })
 
-          after(async () => {
+          afterAll(async () => {
             await client.close()
           })
 
@@ -79,7 +80,7 @@ describe('handler', () => {
   describe('missing provider + missing callback', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({
             test: 'handlers',
             handler,
@@ -90,7 +91,7 @@ describe('handler', () => {
           })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -154,7 +155,7 @@ describe('handler', () => {
   describe('path matching regexp', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({
             test: 'handlers',
             handler,
@@ -173,7 +174,7 @@ describe('handler', () => {
           })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -220,11 +221,11 @@ describe('handler', () => {
   describe('dynamic session', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({ test: 'handlers', handler, config })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -305,11 +306,11 @@ describe('handler', () => {
   describe('dynamic state', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({ test: 'dynamic-state', handler, config })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -356,11 +357,11 @@ describe('handler', () => {
     ;['node'].forEach((handler) => {
       ;['', 'querystring', 'session'].forEach((transport) => {
         describe(`${handler} - transport ${transport}`, () => {
-          before(async () => {
+          beforeAll(async () => {
             client = await Client({ test: 'handlers', handler, config })
           })
 
-          after(async () => {
+          afterAll(async () => {
             await client.close()
           })
 
@@ -399,7 +400,7 @@ describe('handler', () => {
   describe('transport state', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({
             test: 'transport-state',
             handler,
@@ -410,7 +411,7 @@ describe('handler', () => {
           })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -451,12 +452,12 @@ describe('handler', () => {
         ['tokens', 'raw', 'jwt', 'profile']
       ].forEach((response) => {
         describe(`${handler} - ${JSON.stringify(response)}`, () => {
-          before(async () => {
+          beforeAll(async () => {
             const extend = [profile]
             client = await Client({ test: 'handlers', handler, config, extend })
           })
 
-          after(async () => {
+          afterAll(async () => {
             await client.close()
           })
 
@@ -544,11 +545,11 @@ describe('handler', () => {
   describe('oauth2 response_mode form_post', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({ test: 'handlers', handler, config })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -586,11 +587,11 @@ describe('handler', () => {
   describe('cookie-store', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({ test: 'cookie-store', handler, config })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -614,11 +615,11 @@ describe('handler', () => {
   describe('next tick', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           client = await Client({ test: 'next-tick', handler, config })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -638,7 +639,7 @@ describe('handler', () => {
   describe('extend + state', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           const db = { grant: 'simov' }
           const state = ({ get, set }) =>
             get
@@ -658,7 +659,7 @@ describe('handler', () => {
           client = await Client({ test: 'handlers', handler, config, state, extend })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -685,7 +686,7 @@ describe('handler', () => {
       describe(handler, () => {
         let calls = []
 
-        before(async () => {
+        beforeAll(async () => {
           const agent = new require('http').Agent()
           agent.createConnection = (
             (orig) =>
@@ -698,7 +699,7 @@ describe('handler', () => {
           client = await Client({ test: 'handlers', handler, config, request: { agent } })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 
@@ -764,12 +765,12 @@ describe('handler', () => {
   describe('profile', () => {
     ;['node'].forEach((handler) => {
       describe(handler, () => {
-        before(async () => {
+        beforeAll(async () => {
           const extend = [profile]
           client = await Client({ test: 'handlers', handler, config, extend })
         })
 
-        after(async () => {
+        afterAll(async () => {
           await client.close()
         })
 

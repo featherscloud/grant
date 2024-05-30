@@ -1,5 +1,6 @@
-const t = require('assert')
-const response = require('../lib/response.js')
+import { describe, it } from 'vitest'
+import t from 'assert'
+import * as response from '../lib/response.js'
 
 const sign = (...args) =>
   args
