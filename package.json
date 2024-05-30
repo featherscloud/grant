@@ -25,6 +25,7 @@
     "qs": "^6.11.2"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^1.6.0",
     "grant-profile": "^1.0.2",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
@@ -46,7 +47,7 @@
   "types": "grant.d.ts",
   "scripts": {
     "test": "npm run test:ci",
-    "test:ci": "npx vitest run test/handler/handler.test.js --no-file-parallelism"
+    "test:ci": "npx vitest run test/ --no-file-parallelism --coverage"
   },
   "engines": {
     "node": ">=20.0.0"
